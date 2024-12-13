@@ -1,0 +1,28 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  script:
+    - python -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt
+  artifacts:
+    paths:
+      - venv/
+
+test:
+  stage: test
+  script:
+    - source venv/bin/activate
+    - python -m unittest discover
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying the application..."
+    - source venv/bin/activate
+    - python app.py
+
