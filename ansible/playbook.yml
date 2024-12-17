@@ -1,0 +1,42 @@
+---
+- name: Install and Configure Docker
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install required packages
+      apt:
+        name: 
+          - python3-pip
+          - python3-docker
+        state: present
+        update_cache: true
+
+    - name: Install Docker SDK for Python
+      pip:
+        name: docker
+        executable: pip3
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+- name: Run Docker Container
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Pull Docker image from ArvanCloud
+      docker_image:
+        name: docker.arvancloud.ir/nginx:latest
+        source: pull
+
+    - name: Create Docker container
+      docker_container:
+        name: my_nginx_container
+        image: docker.arvancloud.ir/nginx:latest
+        state: started
+        ports:
+          - "80:80"
+
