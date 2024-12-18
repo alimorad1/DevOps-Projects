@@ -46,7 +46,7 @@ The diagram shows the control node managing multiple servers for deploying Docke
 - Setting up the Docker SDK dynamically for Python.
 - Troubleshooting permission issues during automated container deployment.
 
-## Next Steps
+### Next Steps
 - Add support for custom images and environments.
 - Extend the playbook to include monitoring tools like Prometheus and Grafana.
 - Enable container orchestration with Kubernetes in future iterations.
