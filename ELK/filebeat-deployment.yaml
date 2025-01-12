@@ -1,0 +1,36 @@
+  labels:
+    app: filebeat
+spec:
+  selector:
+    matchLabels:
+      app: filebeat
+  template:
+    metadata:
+      labels:
+        app: filebeat
+    spec:
+      containers:
+      - name: filebeat
+        image: elastic/filebeat:7.17.0
+        args: [
+          "-c", "/etc/filebeat.yml",
+          "-e"
+        ]
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 100m
+        volumeMounts:
+        - name: config
+          mountPath: /etc/filebeat.yml
+          subPath: filebeat.yml
+        - name: varlog
+          mountPath: /var/log
+      volumes:
+      - name: config
+        configMap:
+          name: filebeat-config
+      - name: varlog
+        hostPath:
+          path: /var/log
+

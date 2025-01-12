@@ -1,0 +1,36 @@
+  replicas: 1
+  selector:
+    matchLabels:
+      app: logstash
+  template:
+    metadata:
+      labels:
+        app: logstash
+    spec:
+      containers:
+      - name: logstash
+        image: logstash:7.17.0
+        ports:
+        - containerPort: 5044
+        - containerPort: 9600
+        volumeMounts:
+        - name: logstash-pipeline
+          mountPath: /usr/share/logstash/pipeline/
+      volumes:
+      - name: logstash-pipeline
+        configMap:
+          name: logstash-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+spec:
+  type: NodePort
+  selector:
+    app: logstash
+  ports:
+  - port: 5044
+    targetPort: 5044
+    nodePort: 31437
+

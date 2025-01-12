@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: filebeat-config
+  labels:
+    app: filebeat
+data:
+  filebeat.yml: |-
+    filebeat.inputs:
+    - type: log
+      enabled: true
+      paths:
+        - /var/log/*.log
+
+    output.logstash:
+      hosts: ["logstash:5044"]
+
+    setup.kibana:
+      host: "kibana:5601"
+
