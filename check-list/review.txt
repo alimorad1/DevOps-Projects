@@ -90,6 +90,11 @@ metadata:
   name:
 spac:
   storageClassName:
+  accessMode:
+  -
+  resources:
+    requests:
+      storage:
   calimRef:
   name:
   namespace:
@@ -102,7 +107,11 @@ metadata:
   namespace:
 spec:
   storageClassName:
-  volumeName:
+  accessModes:
+  - 
+  resources:
+    requests:
+      storage:
 
 ---
 
