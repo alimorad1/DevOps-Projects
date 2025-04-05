@@ -9,7 +9,7 @@
 
 ---
 apiversion:
-kind:
+kind: configmap
 metadata:
   name:
 data:
@@ -20,22 +20,22 @@ data:
 *{first of all:
 	encoding the test or file that we need it:
 		#echo -n "THE TEXT" | base64 
-		# base64 /PATH/THE/DIRECTION
+		#base64 /PATH/THE/DIRECTION
 }
 
 apiversion:
-kind:
+kind: secret
 metadata:
   name:
 type: [Opaque, kubernetes.io/tls, kubernetes.io/dockerconfigjson, kubernetes.io/base-auth, custom-type]
-data: #in base of every type this chages
+data: #in base on any type that you changed
 * for example: for kubernetes.io/base-auth
-user-name:
-password:
+user-name: "base64 of it"
+password: "base64 of it"
 
 ---
 apiVersion:
-kind:
+kind: deployment
 metadata:
   name:
   Lables:
@@ -70,7 +70,7 @@ spec:
         secretName:
 ---
 apiVersion:
-kind
+kind: service
 metadata:
   name:
 spec:
@@ -83,7 +83,7 @@ ports:
 
 ---
 apiVersion:
-kind:
+kind: storageclass
 metadata:
   name:
 provisioner:
@@ -105,7 +105,7 @@ allowedTopologies:
     -
 ---
 apiVersion:
-kind:
+kind: pv
 metadata:
   name:
 spac:
@@ -121,7 +121,7 @@ spac:
 
 ---
 apiVersion:
-kind:
+kind: pvc
 metadata:
   name:
   namespace:
