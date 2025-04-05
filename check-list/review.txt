@@ -82,8 +82,28 @@ ports:
   targetport:
 
 ---
-
-
+apiVersion:
+kind:
+metadata:
+  name:
+provisioner:
+  type:
+parameters:
+ * it depens on the type of storage class that you chose it 
+# for example: If you chose NFS as a storageclass 
+  server:
+  path: 
+  readOnly: "false/true"
+# If you chose standard 
+  type:
+volumeBindingMode:
+allowedTopologies:
+- matchLableEperissions:
+  - key:
+    values:
+    -
+    -
+---
 apiVersion:
 kind:
 metadata:
