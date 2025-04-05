@@ -1,0 +1,36 @@
+stages:
+- biuld
+- test
+- deploy
+
+build:
+stage: build 
+script:
+  - 
+  -
+artifacts:
+  paths:
+    -
+    -
+  only:
+  - 
+  tags:
+#  - * this part you should chose runner for run this stage 
+    # for example: test, shired, etc.
+  variables:
+    # for example the name of container or some lables.
+
+test:
+stage: test
+script:
+  -
+  -
+dependencies:
+  - 
+
+deploy:
+stage: deploy 
+script:
+  -
+  -
+environment:
