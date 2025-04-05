@@ -1,0 +1,116 @@
+---
+*when you're going to write these manifest should know about 
+ apiVersions and kind.
+ for do that there are some commands 
+# kubectl version
+# kubectl get no / ns
+# kubectl api-resources
+# 
+
+---
+apiversion:
+kind:
+metadata:
+  name:
+data:
+  ...# for example: for mode of app production/test
+     # for example: for port of app ...
+     * every things are caps*
+---
+*{first of all:
+	encoding the test or file that we need it:
+		#echo -n "THE TEXT" | base64 
+		# base64 /PATH/THE/DIRECTION
+}
+
+apiversion:
+kind:
+metadata:
+  name:
+type: [Opaque, kubernetes.io/tls, kubernetes.io/dockerconfigjson, kubernetes.io/base-auth, custom-type]
+data: #in base of every type this chages
+* for example: for kubernetes.io/base-auth
+user-name:
+password:
+
+---
+apiVersion:
+kind:
+metadata:
+  name:
+  Lables:
+    app:
+
+spec:
+  replicas:
+  selectors:
+    matchLable:
+      app:
+
+  templates:
+    metadata:
+      labels:
+        app:
+  spec:
+    containers:
+    - name:
+      image:
+      volumeMouts:
+      - moutspath:
+        name:
+    volumes:
+    - name:
+      persistentVolumeClaim:
+        claimName:
+    - name: 
+      configMap:
+        name:	
+    - name:
+      secret:
+        secretName:
+---
+apiVersion:
+kind
+metadata:
+  name:
+spec:
+  selector:
+    app.kubernetes.io/name:
+ports:
+- protocol:
+  port:
+  targetport:
+
+---
+
+
+apiVersion:
+kind:
+metadata:
+  name:
+spac:
+  storageClassName:
+  calimRef:
+  name:
+  namespace:
+
+---
+apiVersion:
+kind:
+metadata:
+  name:
+  namespace:
+spec:
+  storageClassName:
+  volumeName:
+
+---
+
+* for checking that every one are good you should use some command for do that:
+# kubectl get po -n 'namespace'
+# '' get deployment -n 'namespace'
+# '' '' svc -n 'namespace'
+# kubectl get rs
+# kubectl describe -n 'namespace' pods/'pod-name
+or kubectl describe -n 'namespace' deployment/'deploy-name'
+# any test that you know about this production
