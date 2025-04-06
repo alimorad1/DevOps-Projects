@@ -1,68 +1,65 @@
-```yml
-apiVersion: v1 
-kind: persistentVolume
-metadata: 
+apiVersion: v1
+kind: PersistentVolume
+metadata:
   name: pv-1
-capacity: 
-  storage: 2Gi 
-accessModes: 
-- ReadWriteOnce
-hostPath: 
-  path: /var/log/nginx
-storageClassName: manual
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /var/log/nginx
+  storageClassName: manual
 
 ---
 apiVersion: v1
-kind: persistentVolumeCliam
-metadata: 
+kind: PersistentVolumeClaim
+metadata:
   name: pvc-1
-spec: 
-  accessModes: 
-  - ReadWriteOnly
-resources: 
-  request:
-    stoage: 2Gi
-storageClassName: manual
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: manual
 
 ---
 apiVersion: apps/v1
-kind: deployment
+kind: Deployment
 metadata:
   name: deployment-1
   labels:
     app: app-1
 spec:
   replicas: 1
-  selectors: 
-    matchLabel:
+  selector:
+    matchLabels:
       app: app-1
-templete:
-  metadata:
-    app: app-1
-
-  spec:
-    initContainer:
-    - name: html-startup
-      image: busybox
-      command: ["sh", "c", "echo "Hi, this is a test." >> /usr/share/nginx/html/index.html]
-      volumeMounts:
-      - name: init-1
-        mountPath: /root/test
-    containers:
-    - name: container-1
-      image: nginx:latest
-      volumeMounts:
-      - mountPath: /var/log/nginx
-        name: logs
-      - mountPath: /usr/share/nginx/html
-        name: front
-    volumes:
-    - name: logs
-      persistentVolumeCliam
-        cliamName: pvc-1
-    - name: front
-      emptyDir
-        limitSize: 1Gi
-    - name: init-1 
-      emptyDir: {}
-```    
+  template:
+    metadata:
+      labels:
+        app: app-1
+    spec:
+      initContainers:
+        - name: html-startup
+          image: busybox
+          command: ["sh", "-c", "echo 'Hi, this is a test.' > /usr/share/nginx/html/index.html"]
+          volumeMounts:
+            - name: front
+              mountPath: /usr/share/nginx/html
+      containers:
+        - name: container-1
+          image: nginx:latest
+          volumeMounts:
+            - mountPath: /var/log/nginx
+              name: logs
+            - mountPath: /usr/share/nginx/html
+              name: front
+      volumes:
+        - name: logs
+          persistentVolumeClaim:
+            claimName: pvc-1
+        - name: front
+          emptyDir:
+            sizeLimit: 1Gi
