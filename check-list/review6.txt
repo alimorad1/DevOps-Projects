@@ -1,81 +1,78 @@
-# this is a manifest for createing a pv / pvc base on nfs server and a deployment that has a init container 
-# that run a command for startup html page.
+# This manifest creates a PV/PVC based on NFS and a Deployment with an initContainer
+# to create an index.html file on shared storage.
 
-## mkdir /root/ali/app-2
-## chmod 777 /root/ali/app-2
-## exportfs -rav
+# NFS server setup:
+# mkdir -p /root/ali/app-2
+# chmod 777 /root/ali/app-2
+# echo "/root/ali/app-2 *(rw,sync,no_subtree_check,no_root_squash)" >> /etc/exports
+# exportfs -rav
+
+---
 apiVersion: v1 
-kind: persistentVolume
+kind: PersistentVolume
 metadata: 
   name: pv-2
-capacity: 
-  storage: 10Gi
-accessModes:
-- ReadWriteOnce
-storageClassName: nfs-storage
-nfs:
-  path: /root/ali/app-2
-  server: 192.168.000
---- 
+spec:
+  capacity: 
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: nfs-storage
+  nfs:
+    path: /root/ali/app-2
+    server: 192.168.0.100   # آدرس سرورت رو اصلاح کن
+
+---
 apiVersion: v1 
-kind: persistentVolumeCliam
+kind: PersistentVolumeClaim
 metadata: 
   name: pvc-2
-accessModes:
-- ReadWriteOnce
-resources:
-  requests:
-    storage: 5Gi 
-storageClassName: nfs-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi 
+  storageClassName: nfs-storage
+
 ---
 apiVersion: apps/v1
-kind: deployment
+kind: Deployment
 metadata: 
   name: deployment-2
   labels:
     app: app-2
 spec:
   replicas: 3
-  selectors: 
+  selector: 
     matchLabels: 
       app: app-2
   template:
     metadata:
       labels:
         app: app-2
-  spec:
-    initcontainers: 
-    - name: startup-1
-      image: busybox
-      command: ["sh", "-c", "echo 'Hi, this is test.' > /usr/share/nginx/html"]
-      volumeMounts: 
+    spec:
+      initContainers: 
+      - name: startup-1
+        image: busybox
+        command: ["sh", "-c", "echo 'Hi, this is test.' > /usr/share/nginx/html/index.html"]
+        volumeMounts: 
+        - name: front
+          mountPath: /usr/share/nginx/html
+
+      containers:
+      - name: container-app-1
+        image: nginx
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: front
+        - mountPath: /var/log/nginx
+          name: logs
+
+      volumes: 
       - name: front
-        mountPath: /usr/share/nginx/html
-  containers:
-  - name: container-app-1
-    image: nginx
-    volumeMounts:
-    - mountPath: /usr/share/nginx/html
-      name: fornt
-    - mountPath: /var/log/nginx
-      name: logs
-  volumes: 
-  - name: front
-    persistentVolumeCliam:
-      cliamName: pvc-2
-  - name: logs 
-    emptyDir: 
-      sizaLimit: 2Gi
-
-
-
-
-
-
-
-
-
-
-
-
-
+        persistentVolumeClaim:
+          claimName: pvc-2
+      - name: logs 
+        emptyDir: 
+          sizeLimit: 2Gi
