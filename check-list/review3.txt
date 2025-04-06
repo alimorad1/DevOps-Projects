@@ -1,0 +1,87 @@
+* IN the this test I wanna create a pod with pv and pvc that 
+them linked to NFS server
+
+# first Of all I create a directory in nfs server 
+and give the accessbility
+
+#mkdir /root/ali/test
+#chmod 777 /root/ali/test
+#exportfs -rav
+--- 
+apiVersion: v1 
+kind: persistentVolume
+metadata:
+  name: pv-test
+capacity:
+  storage: 20Gi
+accessMode:
+- ReadWriteOnce
+
+nfs:
+  path: /root/ali/test
+  server: 192.168....
+  storageClassName: nfs-storage
+
+---
+apiVersion: v1
+kind: persistentVolumeClaim
+metadata: 
+  name: pvc-test
+capacity: 
+  storage: 5Gi
+accessMode: 
+- ReadWriteOnce
+storageClassName: nfs-storage
+
+---
+apiVersion: v1
+kind: pod
+metadata: 
+  name: pod-test
+spec:
+  containers:
+  - name: container-test
+    image: nginx
+    volumeMouts:
+    - moutPath: /usr/share/nginx/html
+      name: front
+volumes: 
+- name: front
+  persistentVolumeClaim: 
+    cliamName: pvc-test
+
+---
+If you want to create a deployment instead of pod 
+you can use this manifest:
+
+
+apiVersion: v1 
+kind: deployment
+metadata: 
+  name: deployment-test
+labales: 
+  app: nginx
+spc:
+  replicas: 3
+  sellectors: 
+    matchLables:
+      app: nginx
+  template: 
+    lable: 
+      app: nginx
+  spec:
+    containers:
+    - name: container-test
+      image: nginx
+      volumeMouts: 
+      - moutPath: /usr/share/nginx/html
+        name: front
+      - moutPath: /root/ali/tast
+	name: back
+    volumes: 
+    - name: front
+      persistentVolumeClaim:
+	claimName: pvc-test
+    - name: back
+      emptyDir: 
+  	limetSize: 3Gi 
