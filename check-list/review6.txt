@@ -1,0 +1,81 @@
+# this is a manifest for createing a pv / pvc base on nfs server and a deployment that has a init container 
+# that run a command for startup html page.
+
+## mkdir /root/ali/app-2
+## chmod 777 /root/ali/app-2
+## exportfs -rav
+apiVersion: v1 
+kind: persistentVolume
+metadata: 
+  name: pv-2
+capacity: 
+  storage: 10Gi
+accessModes:
+- ReadWriteOnce
+storageClassName: nfs-storage
+nfs:
+  path: /root/ali/app-2
+  server: 192.168.000
+--- 
+apiVersion: v1 
+kind: persistentVolumeCliam
+metadata: 
+  name: pvc-2
+accessModes:
+- ReadWriteOnce
+resources:
+  requests:
+    storage: 5Gi 
+storageClassName: nfs-storage
+---
+apiVersion: apps/v1
+kind: deployment
+metadata: 
+  name: deployment-2
+  labels:
+    app: app-2
+spec:
+  replicas: 3
+  selectors: 
+    matchLabels: 
+      app: app-2
+  template:
+    metadata:
+      labels:
+        app: app-2
+  spec:
+    initcontainers: 
+    - name: startup-1
+      image: busybox
+      command: ["sh", "-c", "echo 'Hi, this is test.' > /usr/share/nginx/html"]
+      volumeMounts: 
+      - name: front
+        mountPath: /usr/share/nginx/html
+  containers:
+  - name: container-app-1
+    image: nginx
+    volumeMounts:
+    - mountPath: /usr/share/nginx/html
+      name: fornt
+    - mountPath: /var/log/nginx
+      name: logs
+  volumes: 
+  - name: front
+    persistentVolumeCliam:
+      cliamName: pvc-2
+  - name: logs 
+    emptyDir: 
+      sizaLimit: 2Gi
+
+
+
+
+
+
+
+
+
+
+
+
+
