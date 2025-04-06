@@ -1,43 +1,47 @@
-apiVersion: v1 
-kind: persistentVolume
+apiVersion: v1
+kind: PersistentVolume
 metadata:
   name: pv-test
 spec:
   capacity:
-    storage: 10 Gi 
-accessMode:
-- ReadWriteOnce
-hostPath:
-  Path: /root/ali
-storageClassName: manual
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /root/ali
+  storageClassName: manual
+
 ---
 apiVersion: v1
-kind: persistentVolumeCliam
+kind: PersistentVolumeClaim
 metadata:
-  name:pvc-test
-resources:
-  request:
-    storage: 5Gi
-storageClassName: sc-test
+  name: pvc-test
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: manual
+
 ---
 apiVersion: v1
-kind: pod
+kind: Pod
 metadata:
   name: pod-test
 spec:
   containers:
-  - name: container-test
-    image: nginx
-    volumeMouts:
-    - moutPth: /usr/share/nginx/html
-      name: front
-    - mountpath: /root/test
-      name: back
-volumes:
-- name: front
-  emptyDir:
-    sizeLimit: 1.5G
-- name: back
-  persistentVolumeClaim:
-    claimName: pcv-test
-
+    - name: container-test
+      image: nginx
+      volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: front
+        - mountPath: /root/test
+          name: back
+  volumes:
+    - name: front
+      emptyDir:
+        sizeLimit: 1.5Gi
+    - name: back
+      persistentVolumeClaim:
+        claimName: pvc-test
