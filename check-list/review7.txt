@@ -1,0 +1,43 @@
+apiVresion: apps/v1
+kind: deployment 
+metadata:
+  name: deployment-3
+  lables:
+    app: app-3
+spec:
+  strategy: 
+    roullingUpdate:
+      maxSurge: 3
+      maxUnavailable: 1
+  type: RoollingUpdate
+  replicas: 9
+  selector:
+    mathLables: 
+      app: app-3
+  template:
+    metadata:
+      labels:
+        app: app-3
+  spec:
+    initcontainers:
+    - name: startup-3
+      image: busybox
+      commad: ["sh", "-c", "echo 'hi this is for test.' > /usr/share/nginx/html"]
+      volumeMounts: 
+      - name: front
+        mountPath: /usr/share/nginx/html
+    containers:
+      - name: container-3
+        image: nginx
+        volumeMounts: 
+        - name: front
+          mountPath: /usr/share/nginx/html
+        - name: logs
+          mountPath: /var/log/nginx
+volumes: 
+- name: fornt
+  emptyhDir:
+    sizeLimit: 5Gi
+- name: logs
+  emptyDir: 
+    sizeLimit: 5Gi  
