@@ -1,0 +1,10 @@
+{
+  "name": "vault-app",
+  "version": "1.0.0",
+  "description": "App to fetch secrets from Vault",
+  "main": "app.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1"
+  }
+}
