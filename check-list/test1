@@ -1,0 +1,39 @@
+const express = require('express');
+const axios = require('axios');
+
+const app = express();
+const port = 3000;
+
+// آدرس Vault
+const VAULT_ADDR = 'http://vault-dev:8200';
+
+// توکن Vault (در حالت Dev)
+const VAULT_TOKEN = 'myroot';
+
+// گرفتن Secret از Vault
+async function getSecrets() {
+  try {
+    const response = await axios.get(`${VAULT_ADDR}/v1/secret/data/myapp`, {
+      headers: {
+        'X-Vault-Token': VAULT_TOKEN
+      }
+    });
+    return response.data.data.data;  // دسترسی به username و password
+  } catch (error) {
+    console.error("Error fetching secret", error);
+    return null;
+  }
+}
+
+app.get('/', async (req, res) => {
+  const secrets = await getSecrets();
+  if (secrets) {
+    res.send(`Username: ${secrets.username}, Password: ${secrets.password}`);
+  } else {
+    res.send("Error fetching secrets.");
+  }
+});
+
+app.listen(port, () => {
+  console.log(`App listening at http://localhost:${port}`);
+});
