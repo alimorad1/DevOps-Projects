@@ -1,0 +1,18 @@
+# استفاده از تصویر Node.js رسمی
+FROM node:14
+
+# فولدر کاری داخل کانتینر
+WORKDIR /usr/src/app
+
+# نصب پکیج‌های ضروری
+COPY package*.json ./
+RUN npm install
+
+# کپی کردن کد
+COPY . .
+
+# تنظیم پورت
+EXPOSE 3000
+
+# دستور اجرای اپلیکیشن
+CMD ["node", "app.js"]
