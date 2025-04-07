@@ -1,0 +1,25 @@
+apiVersion: v1 
+kind: secret
+metadata: 
+  name: for-DB
+data:
+.user-name: YWxpbW9yYWRpCg==  
+.pass-word: YWxpbW9yYWRpMTkK
+
+--- 
+apiVersion: apps/v1
+kind: pod
+metadata: 
+  name: pod-4
+spec: 
+  volumes:
+  - name: secret-for-DB
+    secret:
+      secretName: for-DB
+  containers: 
+  - name: container-4
+    image: nginx
+    volumeMounts: 
+    - name: for-DB
+      readOnly: true
+      mountPath: "/etc/secret-volume"
