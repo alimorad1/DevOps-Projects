@@ -20,6 +20,6 @@ spec:
   - name: container-4
     image: nginx
     volumeMounts: 
-    - name: for-DB
+    - name: secret-for-DB
       readOnly: true
       mountPath: "/etc/secret-volume"
