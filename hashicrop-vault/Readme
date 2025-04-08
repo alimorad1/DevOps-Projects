@@ -1,0 +1,52 @@
+# for add a tocken in vault
+curl --header "X-Vault-Token: <root_token>" \
+     --request POST \
+     --data @token_create_payload.json \
+     http://127.0.0.1:8200/v1/auth/token/create
+
+# for add key-value(KV)
+curl --header "X-Vault-Token: <your_root_token>" \
+     --request POST \
+     --data @secret_create_payload.json \
+     http://127.0.0.1:8200/v1/secret/data/myapp/config
+
+# for setting TTL on the KV 
+curl --header "X-Vault-Token: <your_root_token>" \
+     --request POST \
+     --data '{"data": {"API_KEY": "12345", "DB_PASS": "P@ssw0rd"}, "options": {"ttl": "1h"}}' \
+     http://127.0.0.1:8200/v1/secret/data/myapp/config
+
+# for getting log about this tocken
+curl --header "X-Vault-Token: <your_token>" \
+     --request GET \
+     http://127.0.0.1:8200/v1/sys/audit/file
+
+# for create some polices for a tocken that you created it after that 
+{
+  "policy": {
+    "path": {
+      "secret/data/myapp/*": {
+        "capabilities": ["read", "create"]
+      }
+    }
+  }
+}
+
+## create policy
+curl --header "X-Vault-Token: root" \
+     --request POST \
+     --data @myapp-policy.json \
+     http://127.0.0.1:8200/v1/sys/policies/acl/myapp-policy
+
+## create tocken with the policy
+curl --header "X-Vault-Token: root" \
+     --request POST \
+     --data '{"policies": ["myapp-policy"]}' \
+     http://127.0.0.1:8200/v1/auth/token/create
+
+# for send logs to a syslog 
+curl --header "X-Vault-Token: root" \
+     --request PUT \
+     --data '{"type": "syslog", "address": "udp://127.0.0.1:514"}' \
+     http://127.0.0.1:8200/v1/sys/audit/syslog
+
