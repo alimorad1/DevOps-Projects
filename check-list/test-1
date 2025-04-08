@@ -1,0 +1,22 @@
+const axios = require('axios');
+
+async function getSecret() {
+  const vaultToken = 'توکن دسترسی که از UI گرفتی';
+  const vaultUrl = 'http://localhost:8200/v1/kv/data/myapp/config';
+
+  try {
+    const response = await axios.get(vaultUrl, {
+      headers: {
+        'X-Vault-Token': vaultToken
+      }
+    });
+
+    const secrets = response.data.data.data;
+    console.log('API_KEY:', secrets.API_KEY);
+    console.log('DB_PASS:', secrets.DB_PASS);
+  } catch (err) {
+    console.error('خطا در دریافت سکرت:', err.message);
+  }
+}
+
+getSecret();
