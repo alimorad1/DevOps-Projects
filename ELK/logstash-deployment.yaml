@@ -1,3 +1,10 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: logstash
+  labels:
+    app: logstash
+spec:
   replicas: 1
   selector:
     matchLabels:
@@ -11,15 +18,15 @@
       - name: logstash
         image: logstash:7.17.0
         ports:
-        - containerPort: 5044
-        - containerPort: 9600
+        - containerPort: 5044    # پورت Beats
+        - containerPort: 9600    # پورت رابط وب Logstash
         volumeMounts:
         - name: logstash-pipeline
           mountPath: /usr/share/logstash/pipeline/
       volumes:
       - name: logstash-pipeline
         configMap:
-          name: logstash-config
+          name: logstash-config  # متصل کردن ConfigMap به پاد
 ---
 apiVersion: v1
 kind: Service
@@ -33,4 +40,6 @@ spec:
   - port: 5044
     targetPort: 5044
     nodePort: 31437
-
+  - port: 9600
+    targetPort: 9600
+    nodePort: 31438
