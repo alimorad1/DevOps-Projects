@@ -14,5 +14,3 @@ data:
         hosts => ["http://elasticsearch:9200"]
       }
     }
-
-~                                                                                                                                                   ~         
