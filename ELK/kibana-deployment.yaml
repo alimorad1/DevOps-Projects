@@ -1,3 +1,5 @@
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: kibana
   labels:
@@ -13,13 +15,13 @@ spec:
         app: kibana
     spec:
       containers:
-      - name: kibana
-        image: kibana:7.17.0
-        ports:
-        - containerPort: 5601
-        env:
-        - name: ELASTICSEARCH_HOSTS
-          value: "http://elasticsearch:9200"
+        - name: kibana
+          image: kibana:7.17.0
+          ports:
+            - containerPort: 5601
+          env:
+            - name: ELASTICSEARCH_HOSTS
+              value: "http://elasticsearch:9200"
 ---
 apiVersion: v1
 kind: Service
@@ -30,8 +32,7 @@ spec:
   selector:
     app: kibana
   ports:
-  - port: 5601
-    targetPort: 5601
-    nodePort: 31438
-
-                        
+    - port: 5601
+      targetPort: 5601
+      nodePort: 31438
+        
