@@ -1,0 +1,77 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  IMAGE_TAG: "latest"
+  IMAGE_NAME: "$NEXUS_REGISTRY/$DOCKER_REPO:$IMAGE_TAG"
+
+before_script:
+  - apk add --no-cache curl openjdk17 maven
+  - echo "⚙️ Setting up Nexus Maven settings..."
+  - mkdir -p ~/.m2
+  - cp .ci/settings.xml ~/.m2/settings.xml  # فرض بر اینه که settings.xml توی پروژه هست
+
+  - echo "🔐 Logging in to Nexus Docker Registry..."
+  - echo "$NEXUS_PASSWORD" | docker login $NEXUS_REGISTRY -u "$NEXUS_USERNAME" --password-stdin
+
+stages:
+  - build
+  - test
+  - package
+  - dockerize
+  - push
+
+cache:
+  paths:
+    - .m2/repository
+    - target
+
+build:
+  stage: build
+  tags:
+    - docker
+  script:
+    - echo "📦 Starting build stage"
+    - mvn compile
+
+test:
+  stage: test
+  tags:
+    - docker
+  script:
+    - echo "🧪 Starting test stage"
+    - mvn test
+
+package:
+  stage: package
+  tags:
+    - docker
+  script:
+    - echo "📦 Packaging app"
+    - mvn package
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in: 1 week
+
+dockerize:
+  stage: dockerize
+  tags:
+    - docker
+  dependencies:
+    - package
+  script:
+    - echo "🐳 Building Docker image..."
+    - docker build -t $IMAGE_NAME .
+
+push:
+  stage: push
+  tags:
+    - docker
+  script:
+    - echo "📤 Pushing Docker image to Nexus Registry..."
+    - docker push $IMAGE_NAME
+
